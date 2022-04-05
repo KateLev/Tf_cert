@@ -1,0 +1,103 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 30 15:23:49 2022
+
+@author: Kate
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import seaborn as sns
+
+class Distribution:
+    
+    def __init__(self, distr_type:str, N:int):
+        self.distr_type = distr_type
+        self.N = N
+    
+    def _check(self, distr_type, N):
+        if distr_type not in ['Normal', 'Ravn']:
+            raise ValueError('distr_type is not valid')
+        if N < 1:
+            raise ValueError('N is not valid')                 
+ 
+    def _info(self , s:np.ndarray):
+        print('Мат ожидание', np.mean(s))
+        print('Среднее', np.average(s))
+        print('Разность',  np.mean(s) - np.average(s))  
+        
+    def norm(self, mu, sigma, N):
+        
+        # строим сам график
+        s = np.random.normal(mu, sigma, 1000)        
+        count, bins, ignored = plt.hist(s, N, density=True)
+        plt.plot(bins, 1/(sigma * np.sqrt(2 * np.pi))*np.exp( - (bins - mu)**2 / (2 * sigma**2) ), linewidth=2, color='r')
+        plt.xlabel('Frequency')
+        plt.ylabel('Value')
+        plt.title('Normal Distribution: $\mu = %.2f, $sigma=%.2f'%(mu,sigma))
+        
+        # Красота для отрисовки mu и сигма на графике 
+        plt.vlines(mu, 0, np.exp(-(mu - mu) ** 2 /(2* sigma **2))/(math.sqrt(2*math.pi)*sigma), colors = "c", linestyles = "dashed")
+        plt.vlines(mu+sigma, 0, np.exp(-(mu+sigma - mu) ** 2 /(2* sigma **2))/(math.sqrt(2*math.pi)*sigma), colors = "k", linestyles = "dotted")
+        plt.vlines(mu-sigma, 0, np.exp(-(mu-sigma - mu) ** 2 /(2* sigma **2))/(math.sqrt(2*math.pi)*sigma), colors = "k", linestyles = "dotted")
+        plt.xticks ([mu-sigma,mu,mu+sigma],['μ-σ','μ','μ+σ'])
+        
+        self._info(s)
+        
+    def uniform_distr(self, low, high, N):
+        # кейс: проверить значение y, 
+        # строим сам график
+        s = np.random.uniform(low, high, 30)
+        count, bins, ignored = plt.hist(s, N-1, density=True)
+        #заполняем массив y значениями 1/(b-a), чтобы график построить
+        
+        y = np.full(N, 1/(high - low))
+        
+        plt.plot(bins, y, linewidth=2, color='r')
+        plt.xlabel('Frequency')
+        plt.ylabel('Value')
+        plt.title('Uniform Distribution')
+        
+        # Красота для отрисовки mu и сигма на графике 
+      
+        self._info(s)
+        
+    def binomial_distr(self, n, p, trials, N):
+        # n number of trials, p probability of each trial
+        n, p = 10, .5  # number of trials, probability of each trial
+        s = np.random.binomial(n, p, trials)
+        self._info(s)
+        print(s)
+        print('type', type(s))
+        count, bins  = plt.hist(s, trials)
+        print('count ', count)
+        print('bins ', bins)
+         #    (n/bins) * (p ** bins) * ((1 - bins) ** (n - bins))
+        plt.plot(bins, s, linewidth=2, color='r')
+        
+        fig, ax = plt.subplots(figsize=(14,7))
+        ax = sns.distplot(s, bins, label='original call center simulation results')
+        fig, ax = plt.subplots(figsize=(14,7))
+        ax = sns.distplot(s, bins, label='simulation results')
+        ax.set_xlabel("Number of Heads",fontsize=16)
+        plt.xlabel('Frequency')
+        plt.ylabel('Value')
+        plt.title('Binomial Distribution')
+        
+        # Красота для отрисовки mu и сигма на графике 
+      
+# result of flipping a coin 10 times, tested 1000 times.
+        
+        
+
+if __name__ == '__main__':
+   
+    N = 30
+   # N = int(input())
+    distribution = Distribution('Normal', N)
+   # print(f'Distribution = {distribution.distr_type}, N = {distribution.N}')   
+    distribution.norm(3, 1, N )    
+   # distribution.uniform_distr(-5, 10, N )   
+   # distribution.binomial_distr(10, 0.5, 100, N ) 
+   

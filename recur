@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
+def recur(sumArr):
+    length = len(sumArr)
+    if length <= 1:
+        return sumArr[0]
+    else:
+        return(sumArr[-1] + recur(sumArr[0:length-1]))
+
+def testcases():
+    print('Test 1')
+    A = [1, 10, 20]
+    if recur(A) != 31:
+        print('Error for A ', A, 'result = ', recur(A))
+        return 1
+    B = [2]
+    if recur(B) != 2:
+        print('Error for B ', B, 'result = ', recur(B))
+        return 1
+    print('Test - ok')
+    
+if __name__ == '__main__':
+    A = [1, 10, 20]
+    testcases()
+    print(recur(A))
